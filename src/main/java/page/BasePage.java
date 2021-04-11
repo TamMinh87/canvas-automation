@@ -1,31 +1,24 @@
 package page;
 
-import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import utils.Common;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Properties;
+
 
 
 public class BasePage {
     public WebDriver driver;
     public WebDriverWait wait;
-    private InputStream inputStream;
+    Common common  = new Common();
+    String BASE_URL = common.getPropertyValues("base_url");
+    int DEFAULT_WAIT = 15;
 
     //Constructor
-    public BasePage (WebDriver driver){
+    public BasePage (WebDriver driver) throws IOException {
         this.driver = driver;
-        wait = new WebDriverWait(driver,15);
+        wait = new WebDriverWait(driver,DEFAULT_WAIT);
     }
 
     // Common methods of all page classes (e.g. selenium method wrapper)

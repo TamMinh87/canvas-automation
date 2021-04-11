@@ -3,8 +3,9 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import page.CalculatorPage;
 
+import java.io.File;
 
-//@Listeners({ TestListener.class })
+
 public class CalculatorTest extends BaseTest {
     @DataProvider(name="equationInput")
     public Object[][] getEquationInput(){
@@ -27,7 +28,8 @@ public class CalculatorTest extends BaseTest {
         calculator.openCalculator();
         calculator.updateCoordinators();
         calculator.input(equation);
-        calculator.checkResult(testCaseName);
+        File actualImage = calculator.captureCalculatorScreenshot(testCaseName);
+        calculator.compareToBaselineImage(actualImage);
     }
 
 }

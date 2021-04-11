@@ -18,7 +18,7 @@ import java.util.Properties;
 public class Common extends DriverManager {
     private static InputStream inputStream;
 
-    public BufferedImage captureElementScreenshot(WebElement element, String screenshotName) throws Exception {
+    public File captureElementScreenshot(WebElement element, String screenshotName) throws Exception {
 
         if(WrapsElement.class.isAssignableFrom(element.getClass()))
             driver = ((WrapsDriver)((WrapsElement)element).getWrappedElement()).getWrappedDriver();
@@ -26,10 +26,10 @@ public class Common extends DriverManager {
             driver = ((WrapsDriver)element).getWrappedDriver();
 
         //Get the entire Screenshot from the driver of passed WebElement
-        File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+        File screenImage = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
 
-        //Create an instance of Buffered Image from captured screenshot
-        BufferedImage screenImage = ImageIO.read(screenshot);
+        //Create an instance of Buffered Image from captured screenImage
+        BufferedImage bufferedScreenImage = ImageIO.read(screenImage);
 
         //Create a rectangle using Width and Height of element
         Rectangle rect = new Rectangle(element.getSize().getWidth(), element.getSize().getHeight());
@@ -38,12 +38,12 @@ public class Common extends DriverManager {
         org.openqa.selenium.Point p = element.getLocation();
 
         //Create image by for element using its location and size.
-        BufferedImage elementImage = screenImage.getSubimage(p.getX(), p.getY(), rect.width, rect.height);
+        BufferedImage bufferedElementImage = bufferedScreenImage.getSubimage(p.getX(), p.getY(), rect.width, rect.height);
 
         //Save file
-        ImageIO.write(elementImage, "png", screenshot);
-        FileUtils.copyFile(screenshot, new File(String.format("screenshot\\%s_%s.png", this.getPropertyValues("browser"), screenshotName)));
-
+        ImageIO.write(bufferedElementImage, "png", screenImage);
+        File elementImage = new File(String.format("screenshot\\%s_%s.png", this.getPropertyValues("browser"), screenshotName));
+        FileUtils.copyFile(screenImage, elementImage);
         return elementImage;
     }
 

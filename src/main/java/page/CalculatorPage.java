@@ -4,7 +4,9 @@ import com.github.romankh3.image.comparison.ImageComparison;
 import com.github.romankh3.image.comparison.ImageComparisonUtil;
 import com.github.romankh3.image.comparison.model.ImageComparisonResult;
 import com.github.romankh3.image.comparison.model.ImageComparisonState;
+import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -13,8 +15,10 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import utils.Common;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -24,6 +28,7 @@ import static org.testng.Assert.assertEquals;
 
 public class CalculatorPage extends BasePage {
     Common common  = new Common();
+    String PAGE_URL = BASE_URL + "/";
 
     float DEFAULT_CANVAS_WIDTH = 549;
     float DEFAULT_CANVAS_HEIGHT = 710;
@@ -52,14 +57,14 @@ public class CalculatorPage extends BasePage {
     @FindBy(id="canvas")
     WebElement calculatorCanvas;
 
-    public CalculatorPage(WebDriver driver){
+    public CalculatorPage(WebDriver driver) throws IOException {
         super(driver);
         PageFactory.initElements(driver, this);
     }
 
     @Step("open calculator")
     public void openCalculator() {
-        this.driver.get("https://www.online-calculator.com/full-screen-calculator/");
+        this.driver.get(PAGE_URL);
     }
 
     /**
@@ -174,23 +179,32 @@ public class CalculatorPage extends BasePage {
         }
     }
 
-    @Step("capture calculator and compare to baseline image")
-    public void checkResult(String expectedImageName) throws Exception {
-//        expectedImageName = "Subtraction2.png";
+    @Step("capture calculator screenshot")
+    public File captureCalculatorScreenshot(String expectedImageName) throws Exception {
+        File actualImage = common.captureElementScreenshot(calculatorCanvas, expectedImageName);
+        Allure.addAttachment("Actual image", new ByteArrayInputStream(FileUtils.readFileToByteArray(actualImage)));
+        return actualImage;
+    }
+
+    @Step("compare to baseline image")
+    public void compareToBaselineImage(File actualImage) throws Exception {
         String browser = common.getPropertyValues("browser");
-        File resultDestination = new File(String.format("screenshot\\diff\\%s_%s.png", browser, expectedImageName));
+        double diffValue = Double.parseDouble(common.getPropertyValues("percent_of_difference"));
+        File diffImage = new File(String.format("screenshot\\diff\\%s_%s.png", browser, actualImage.getName()));
 
-        BufferedImage actualImage = common.captureElementScreenshot(calculatorCanvas, expectedImageName);
-        BufferedImage expectedImage = ImageComparisonUtil.readImageFromResources(String.format("baseline\\%s\\%s_%s.png", browser, browser, expectedImageName));
+        BufferedImage bufferedExpectedImage = ImageComparisonUtil.readImageFromResources(String.format("baseline\\%s\\%s", browser, actualImage.getName()));
+        BufferedImage bufferedActualImage = ImageIO.read(actualImage);
 
-        ImageComparison imageComparison = new ImageComparison(expectedImage, actualImage, resultDestination);
+        ImageComparison imageComparison = new ImageComparison(bufferedExpectedImage, bufferedActualImage, diffImage);
 
-        imageComparison.setAllowingPercentOfDifferentPixels(5.00);
+        imageComparison.setAllowingPercentOfDifferentPixels(diffValue);
 
         ImageComparisonResult imageComparisonResult = imageComparison.compareImages();
 
         //Image can be saved after comparison, using ImageComparisonUtil.
-        ImageComparisonUtil.saveImage(resultDestination, imageComparisonResult.getResult());
+        ImageComparisonUtil.saveImage(diffImage, imageComparisonResult.getResult());
+
+        Allure.addAttachment("Difference image", new ByteArrayInputStream(FileUtils.readFileToByteArray(diffImage)));
 
         //Check the result
         assertEquals(ImageComparisonState.MATCH, imageComparisonResult.getImageComparisonState());
