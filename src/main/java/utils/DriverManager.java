@@ -22,12 +22,12 @@ public class DriverManager {
         } else if (browser.equals("firefox")) {
             WebDriverManager.firefoxdriver().setup();
             driver = new FirefoxDriver();
-        } else if (browser.equals("ie")) {
-            WebDriverManager.iedriver().setup();
-            driver = new InternetExplorerDriver();
         } else if (browser.equals("edge")) {
             WebDriverManager.edgedriver().setup();
             driver = new EdgeDriver();
+        } else {
+            WebDriverManager.chromedriver().setup();
+            driver = new ChromeDriver();
         }
         return driver;
     }

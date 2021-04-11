@@ -19,9 +19,9 @@ public class CalculatorTest extends BaseTest {
     public Object[][] getEquationInput(){
         return new Object[][]
             {
-                { "Subtraction1", "1 + 2 = " },
-                { "Subtraction2", "3 - 4 = " },
-                { "Subtraction3", "5 / 6 = " }
+                { "Sub01_", "1 + 2 = " },
+                { "Sub02_", "3 - 4 = " },
+                { "Sub03_", "5 / 6 = " }
             };
     }
 
