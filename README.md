@@ -32,12 +32,19 @@ This is a simple maven selenium java project, follow the old famous page object 
 ## How to run it
 1. Clone the project from branch 'allure-report'
   - I keep in this branch to make it's less visible to other candidate, since my project is public
-  - I will change project to private after 3 days
+  - I will change project to private after your team finishes evaluation process
 2. Open as maven project
 3. Change browser in config.properties file (default is chrome)
 4. Run test: `mvn clean test`
 5. Generate report: `allure serve allure-results`
-  - I attach 2 screenshots to last 2 steps: one is actual image, another is difference image (highlight difference pixels)
+  - On the report, there are 2 screenshots on the last 2 steps: one is actual image, another is difference image (highlight difference pixels)
 
 ## Test case
 Well, all test cases are documented in code, please open CalculatorTest.java and take a look on DataProvider test data and baseline image under `resource` folder.
+
+## Limitation
+1. Not work on IE: this page has different DOM on IE, but since IE is not supported anymore, so I won't spend time to fix it
+2. Not try on Safari browser yet: I don't have macOS, so don't have Safari to test
+3. Only provide baseline image for 1 screen resolution, but in the code I already handle browser scaling. If we really need to cover different browser resolution, then just need a minor fix to re-structure baseline-image's directory.
+4. Few flaky tests due to pixel comparison: we compare pixel by pixel, so sometime Calculator on web renders not exactly the same
+  - We can resolve this by updating `percentage_of_difference` (default is 5) that we can accept in `config.properties` file
