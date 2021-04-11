@@ -25,11 +25,13 @@ I'd like to split this to 2 parts
   - Second, I'm thinking about using OCR to read text from image. But due to limited time of the exercise, so I didn't choose this approach
   
 ## Library/pattern
+ - selenium: we can use more modern library/framework like Cypress/Playwright/Puppeteer, but it is not much different in this exercise
+ - webdriver manager
  - page factory
- - read data from config.properties file
- - image-comparison library
+ - image comparison
  - allure report
- - testNG data provider
+ - testNG
+ - junit
 
 ## Project structure
 This is a simple maven selenium java project, follow the old famous page object pattern, and combine allure report. So I won't put more explanation here, we can discuss later if needed.
