@@ -4,6 +4,7 @@ import com.github.romankh3.image.comparison.ImageComparison;
 import com.github.romankh3.image.comparison.ImageComparisonUtil;
 import com.github.romankh3.image.comparison.model.ImageComparisonResult;
 import com.github.romankh3.image.comparison.model.ImageComparisonState;
+import io.qameta.allure.Step;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -22,6 +23,8 @@ import static org.testng.Assert.assertEquals;
 
 
 public class CalculatorPage extends BasePage {
+    Common common  = new Common();
+
     float DEFAULT_CANVAS_WIDTH = 549;
     float DEFAULT_CANVAS_HEIGHT = 710;
     Point NUMBER_0 = new Point(-205, 255);
@@ -54,19 +57,19 @@ public class CalculatorPage extends BasePage {
         PageFactory.initElements(driver, this);
     }
 
-    public void openCalculator() throws IOException {
+    @Step("open calculator")
+    public void openCalculator() {
         this.driver.get("https://www.online-calculator.com/full-screen-calculator/");
-//        String browser = new Common().getPropertyValues("browser");
-//        if (!browser.equals("ie")) {
-        wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(calculatorFrame));
-//        }
-        wait.until(ExpectedConditions.elementToBeClickable(calculatorCanvas));
     }
 
     /**
      * Update coordinators for all elements inside canvas based on its size
      */
+    @Step("check resolution and update coordinators")
     public void updateCoordinators() {
+        wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(calculatorFrame));
+        wait.until(ExpectedConditions.elementToBeClickable(calculatorCanvas));
+
         float currentHeight = calculatorCanvas.getSize().getHeight();
         float currentWidth = calculatorCanvas.getSize().getWidth();
 
@@ -96,20 +99,18 @@ public class CalculatorPage extends BasePage {
                 EQUAL.setLocation((int) (EQUAL.x * diff), (int) (EQUAL.y * diff));
                 CLEAR.setLocation((int) (CLEAR.x * diff), (int) (CLEAR.y * diff));
             }
-
-        } else {
-            // in this exercise, the canvas always maintains the ratio, so not spend time to different ratio case yet
-        }
+        }  // in this exercise, the canvas always maintains the ratio, so not spend time to different ratio case yet
     }
 
     /**
      * click on calculator based on user input
-     * @param equation
+     * @param equation user input
      * @throws Exception when key is not defined yet
      */
+    @Step("click on calculator based on user input")
     public void input(String equation) throws Exception {
 //        equation = "123 + 456 : 0.1 - 789.23 - _345 + _231 = "; // 5,114.77
-        char keys[] = equation.replaceAll("\\s", "").toCharArray();
+        char[] keys = equation.replaceAll("\\s", "").toCharArray();
         Actions actions = new Actions(driver);
 
         for(char key : keys) {
@@ -173,14 +174,18 @@ public class CalculatorPage extends BasePage {
         }
     }
 
+    @Step("capture calculator and compare to baseline image")
     public void checkResult(String expectedImageName) throws Exception {
 //        expectedImageName = "Subtraction2.png";
-        File resultDestination = new File(String.format("screenshot\\diff\\%s_%s.png", Common.getCurrentTimestamp(), expectedImageName));
+        String browser = common.getPropertyValues("browser");
+        File resultDestination = new File(String.format("screenshot\\diff\\%s_%s.png", browser, expectedImageName));
 
-        BufferedImage actualImage = Common.captureElementScreenshot(calculatorCanvas, expectedImageName);
-        BufferedImage expectedImage = ImageComparisonUtil.readImageFromResources(String.format("baseline\\%s.png", expectedImageName));
+        BufferedImage actualImage = common.captureElementScreenshot(calculatorCanvas, expectedImageName);
+        BufferedImage expectedImage = ImageComparisonUtil.readImageFromResources(String.format("baseline\\%s\\%s_%s.png", browser, browser, expectedImageName));
 
         ImageComparison imageComparison = new ImageComparison(expectedImage, actualImage, resultDestination);
+
+        imageComparison.setAllowingPercentOfDifferentPixels(5.00);
 
         ImageComparisonResult imageComparisonResult = imageComparison.compareImages();
 

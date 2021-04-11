@@ -18,7 +18,7 @@ import java.util.Properties;
 public class Common extends DriverManager {
     private static InputStream inputStream;
 
-    public static BufferedImage captureElementScreenshot(WebElement element, String screenshotName) throws Exception {
+    public BufferedImage captureElementScreenshot(WebElement element, String screenshotName) throws Exception {
 
         if(WrapsElement.class.isAssignableFrom(element.getClass()))
             driver = ((WrapsDriver)((WrapsElement)element).getWrappedElement()).getWrappedDriver();
@@ -42,7 +42,7 @@ public class Common extends DriverManager {
 
         //Save file
         ImageIO.write(elementImage, "png", screenshot);
-        FileUtils.copyFile(screenshot, new File(String.format("screenshot\\%s_%s.png", getCurrentTimestamp(), screenshotName)));
+        FileUtils.copyFile(screenshot, new File(String.format("screenshot\\%s_%s.png", this.getPropertyValues("browser"), screenshotName)));
 
         return elementImage;
     }
@@ -69,7 +69,9 @@ public class Common extends DriverManager {
         } catch (Exception e) {
             System.out.println("Exception: " + e);
         } finally {
-            inputStream.close();
+            if (inputStream != null) {
+                inputStream.close();
+            }
         }
         return result;
     }
