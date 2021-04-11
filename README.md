@@ -6,7 +6,12 @@ As per the requirement
   2. Division
   3. Addition
 
-I suppose we only touch to the following buttons: 0 -> 9, '.', '+/-' and 4 operations ':' '-' '+' '=' buttons
+I suppose we only touch to the following buttons
+  - Number buttons: `0` `1` `2` `3` `4` `5` `6` `7` `8` `9`
+  - Operation buttons: `-` `+` `:`
+  - Support buttons: `.` `+/-` and `=`
+  - Other buttons are out of scope
+
 
 ## Approach
 This is a canvas, so there is no locator for element inside canvas at all.
@@ -45,6 +50,7 @@ Well, all test cases are documented in code, please open CalculatorTest.java and
 ## Limitation
 1. Not work on IE: this page has different DOM on IE, but since IE is not supported anymore, so I won't spend time to fix it
 2. Not try on Safari browser yet: I don't have macOS, so don't have Safari to test
-3. Only provide baseline image for 1 screen resolution, but in the code I already handle browser scaling. If we really need to cover different browser resolution, then just need a minor fix to re-structure baseline-image's directory.
-4. Few flaky tests due to pixel comparison: we compare pixel by pixel, so sometime Calculator on web renders not exactly the same
+3. Not have UI test for each action/click (e.g check if Result area display value once we press any button), it makes sense to do this check, but lower priority, so we can do later if have time
+4. Only provide baseline image for 1 screen resolution, but in the code I already handle browser scaling. If we really need to cover different browser resolution, then just need a minor fix to re-structure baseline-image's directory.
+5. Few flaky tests due to pixel comparison: we compare pixel by pixel, so sometime Calculator on web renders not exactly the same
   - We can resolve this by updating `percentage_of_difference` (default is 5) that we can accept in `config.properties` file
