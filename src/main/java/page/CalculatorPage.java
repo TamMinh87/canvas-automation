@@ -114,7 +114,6 @@ public class CalculatorPage extends BasePage {
      */
     @Step("click on calculator based on user input")
     public void input(String equation) throws Exception {
-//        equation = "123 + 456 : 0.1 - 789.23 - _345 + _231 = "; // 5,114.77
         char[] keys = equation.replaceAll("\\s", "").toCharArray();
         Actions actions = new Actions(driver);
 
