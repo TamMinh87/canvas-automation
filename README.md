@@ -22,7 +22,7 @@ I'd like to split this to 2 parts
   - Second, calculator coordinator and click on each button, this approach needs to deal with browser scaling (I follow this approach)
 2. How to verify result
   - First, prepare baseline images, then compare actual screenshot with baseline (I follow this approach)
-  - Second, I'm thinking about using OCR to read text from image (but not have to do MVP for this)
+  - Second, I'm thinking about using OCR to read text from image. But due to limited time of the exercise, so I didn't choose this approach
   
 ## Library/pattern
  - page factory
