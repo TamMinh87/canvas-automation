@@ -54,5 +54,5 @@ Well, all test cases are documented in code, please open CalculatorTest.java and
 2. Not try on Safari browser yet: I don't have macOS, so don't have Safari to test
 3. Not have UI test for each action/click (e.g check if Result area display value once we press any button), it makes sense to do this check, but lower priority, so we can do later if have time
 4. Only provide baseline image for 1 screen resolution, but in the code I already handle browser scaling. If we really need to cover different browser resolution, then just need a minor fix to re-structure baseline-image's directory.
-5. Few flaky tests due to pixel comparison: we compare pixel by pixel, so sometime Calculator on web renders not exactly the same
+5. Few flaky tests due to pixel comparison: we compare pixel by pixel, but sometime Calculator on web renders not exactly the same
   - We can resolve this by updating `percentage_of_difference` (default is 5) that we can accept in `config.properties` file
